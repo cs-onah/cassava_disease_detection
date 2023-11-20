@@ -12,7 +12,7 @@ import 'package:tflite_flutter/tflite_flutter.dart';
 /// process image using [processImage]
 /// dispose using [close]
 class ImageClassificationService {
-  static const modelPath = 'assets/models/plant_disease_detection.tflite';
+  static const modelPath = 'assets/models/plant_disease_detection_v2.tflite';
   static const labelsPath = 'assets/models/labels.txt';
 
   late final IsolateInterpreter isolateInterpreter;
