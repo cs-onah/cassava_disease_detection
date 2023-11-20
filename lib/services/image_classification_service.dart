@@ -93,25 +93,27 @@ class ImageClassificationService {
 
     // Set tensor input [1, 224, 224, 3]
     final input = [imageMatrix];
-    // Set tensor output [1, 1001]
-    final output = [List<int>.filled(outputTensor.shape[1], 0)];
+    // Set tensor output [1, 4]
+    final output = [List<double>.filled(outputTensor.shape[1], 0)];
 
     // // Run inference
     await isolateInterpreter.run(input, output);
     // Get first output tensor
     final result = output.first;
-    int maxScore = result.reduce((a, b) => a + b);
-
+    double maxScore = result.reduce((a, b) => a + b);
+    print("input shape: ${inputTensor.shape}");
+    print("output shape: ${outputTensor.shape}");
     print(result);
 
-    // Set classification map {label: points}
-    // var classification = <String, double>{};
-    // for (var i = 0; i < result.length; i++) {
-    //   if (result[i] != 0) {
-    //     // Set label: points
-    //     classification[labels[i]] = result[i].toDouble() / maxScore.toDouble();
-    //   }
-    // }
+    var classification = <String, double>{};
+    for (var i = 0; i < result.length; i++) {
+      if (result[i] != 0) {
+        classification[labels[i]] = result[i].toDouble() / maxScore;
+      }
+    }
+
+    print(classification);
+    print(maxScore);
   }
 
   Future<void> close() async {
