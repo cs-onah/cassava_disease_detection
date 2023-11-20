@@ -1,0 +1,34 @@
+name: plant_disease_detection
+description: A flutter app to detect select diseases in plants using an AI model.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.19.0 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  image: ^4.0.17
+  path: ^1.8.3
+  path_provider: ^2.0.15
+  image_picker: ^0.8.8
+  tflite_flutter:
+  camera:
+  permission_handler:
+
+dev_dependencies:
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/models/
+
+flutter_launcher_icons:
+  image_path: "assets/images/logo.png"
+  android: "ic_launcher"
+  ios: true
+  remove_alpha_ios: true
