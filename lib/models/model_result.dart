@@ -1,8 +1,12 @@
+import 'dart:math';
+
 class ModelResult {
   double mosaic;
   double blight;
   double brownStreak;
   double greenMite;
+
+  double get solution => [mosaic, blight, brownStreak, greenMite].reduce(max);
 
   ModelResult({
     this.mosaic = 0,
@@ -25,16 +29,16 @@ class ModelResult {
       );
 
   factory ModelResult.fromJson(Map<String, dynamic> json) => ModelResult(
-    mosaic: json["Mosaic"]?.toDouble() ?? 0,
-    blight: json["Blight"]?.toDouble() ?? 0,
-    brownStreak: json["Brown Streak"]?.toDouble() ?? 0,
-    greenMite: json["Green Mite"]?.toDouble() ?? 0,
-  );
+        mosaic: json["Mosaic"]?.toDouble() ?? 0,
+        blight: json["Blight"]?.toDouble() ?? 0,
+        brownStreak: json["Brown Streak"]?.toDouble() ?? 0,
+        greenMite: json["Green Mite"]?.toDouble() ?? 0,
+      );
 
   Map<String, dynamic> toJson() => {
-    "Mosaic": mosaic,
-    "Blight": blight,
-    "Brown Streak": brownStreak,
-    "Green Mite": greenMite,
-  };
+        "Mosaic": mosaic,
+        "Blight": blight,
+        "Brown Streak": brownStreak,
+        "Green Mite": greenMite,
+      };
 }
