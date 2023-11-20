@@ -45,9 +45,10 @@ class ImageClassificationService {
     isolateInterpreter =
         await IsolateInterpreter.create(address: interpreter.address);
 
-    // Get tensor input shape [1, 224, 224, 3]
+    // actual shape: [1, 224, 224, 3]
     inputTensor = interpreter.getInputTensors().first;
-    // Get tensor output shape [1, 1001]
+
+    // actual shape: [1, 4]
     outputTensor = interpreter.getOutputTensors().first;
 
     print(inputTensor);
@@ -68,10 +69,49 @@ class ImageClassificationService {
   }
 
   Future processImage(Image image) async {
-    var outputs = {0: 0, 1: 1};
-    await isolateInterpreter.run(image, outputs);
-    print(outputs);
-    return outputs;
+    // resize original image to match model shape.
+    Image imageInput = copyResize(
+      image,
+      width: inputTensor.shape[1],
+      height: inputTensor.shape[2],
+    );
+
+    // if (Platform.isAndroid && isolateModel.isCameraFrame()) {
+    //   imageInput = image_lib.copyRotate(imageInput, angle: 90);
+    // }
+
+    final imageMatrix = List.generate(
+      imageInput.height,
+      (y) => List.generate(
+        imageInput.width,
+        (x) {
+          final pixel = imageInput.getPixel(x, y);
+          return [pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt()];
+        },
+      ),
+    );
+
+    // Set tensor input [1, 224, 224, 3]
+    final input = [imageMatrix];
+    // Set tensor output [1, 1001]
+    final output = [List<int>.filled(outputTensor.shape[1], 0)];
+
+    // // Run inference
+    await isolateInterpreter.run(input, output);
+    // Get first output tensor
+    final result = output.first;
+    int maxScore = result.reduce((a, b) => a + b);
+
+    print(result);
+
+    // Set classification map {label: points}
+    // var classification = <String, double>{};
+    // for (var i = 0; i < result.length; i++) {
+    //   if (result[i] != 0) {
+    //     // Set label: points
+    //     classification[labels[i]] = result[i].toDouble() / maxScore.toDouble();
+    //   }
+    // }
   }
 
   Future<void> close() async {
