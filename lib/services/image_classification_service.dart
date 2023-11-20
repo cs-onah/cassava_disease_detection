@@ -1,109 +1,80 @@
 import 'dart:developer';
-import 'dart:io';
-import 'dart:isolate';
 
-import 'package:camera/camera.dart';
 import 'package:flutter/services.dart';
 import 'package:image/image.dart';
+import 'package:plant_disease_detection/models/model_result.dart';
+import 'package:plant_disease_detection/services/image_utility.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 
-import 'isolate_inference.dart';
-
+/// Process image using model and provides classification output
+///
+/// initialize using [init]
+/// process image using [processImage]
+/// dispose using [close]
 class ImageClassificationService {
   static const modelPath = 'assets/models/plant_disease_detection.tflite';
   static const labelsPath = 'assets/models/labels.txt';
 
-  late final Interpreter interpreter;
   late final IsolateInterpreter isolateInterpreter;
   late Tensor inputTensor;
   late Tensor outputTensor;
   List<String> labels = [];
 
-  // Load model
-  Future<void> _loadModel() async {
-    InterpreterOptions options = InterpreterOptions();
-
-    // Use XNNPACK Delegate
-    if (Platform.isAndroid) {
-      options.addDelegate(XNNPackDelegate());
-    }
-
-    // Use GPU Delegate
-    // doesn't work on emulator
-    // if (Platform.isAndroid) {
-    //   options.addDelegate(GpuDelegateV2());
-    // }
-
-    // Use Metal Delegate
-    if (Platform.isIOS) {
-      options.addDelegate(GpuDelegate());
-    }
-
-    // Load model from assets
-    // interpreter = await Interpreter.fromAsset(modelPath, options: options);
-    interpreter = await Interpreter.fromAsset(modelPath);
-    isolateInterpreter =
-        await IsolateInterpreter.create(address: interpreter.address);
-
-    // actual shape: [1, 224, 224, 3]
-    inputTensor = interpreter.getInputTensors().first;
-
-    // actual shape: [1, 4]
-    outputTensor = interpreter.getOutputTensors().first;
-
-    print(inputTensor);
-    print(outputTensor);
-
-    log('Interpreter loaded successfully');
+  Future<void> init() async {
+    await _loadModel();
+    await _loadLabels();
   }
 
-  // Load labels from assets
+  Future<void> _loadModel() async {
+    final interpreter = await Interpreter.fromAsset(modelPath);
+    isolateInterpreter = await IsolateInterpreter.create(
+      address: interpreter.address,
+    );
+
+    /// Actual shape: [1, 224, 224, 3]
+    /// Uses the NHWC format, typically used to collect images for models
+    ///
+    /// N: Number of samples (batch size)
+    /// H: Height of the image
+    /// W: Width of the image
+    /// C: Number of channels (e.g., 3 for RGB images, 1 for grayscale)
+    ///
+    /// NOTE: Some models can require a different format
+    inputTensor = interpreter.getInputTensors().first;
+
+    /// actual shape: [1, 4]
+    /// 2-D shape; representing 1 row, 4 columns
+    outputTensor = interpreter.getOutputTensors().first;
+
+    log("input shape: ${inputTensor.shape}");
+    log("output shape: ${outputTensor.shape}");
+    log('Model loaded successfully');
+  }
+
   Future<void> _loadLabels() async {
     final labelTxt = await rootBundle.loadString(labelsPath);
     labels = labelTxt.split('\n');
   }
 
-  Future<void> initHelper() async {
-    await _loadModel();
-    await _loadLabels();
-  }
-
-  Future processImage(Image image) async {
-    // resize original image to match model shape.
+  Future<ModelResult> processImage(Image image) async {
+    // resize original image to match model required input shape.
     Image imageInput = copyResize(
       image,
       width: inputTensor.shape[1],
       height: inputTensor.shape[2],
     );
 
-    // if (Platform.isAndroid && isolateModel.isCameraFrame()) {
-    //   imageInput = image_lib.copyRotate(imageInput, angle: 90);
-    // }
-
-    final imageMatrix = List.generate(
-      imageInput.height,
-      (y) => List.generate(
-        imageInput.width,
-        (x) {
-          final pixel = imageInput.getPixel(x, y);
-          return [pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt()];
-        },
-      ),
-    );
+    final imageMatrix = ImageUtil.getPixelMatrix(imageInput);
 
     // Set tensor input [1, 224, 224, 3]
     final input = [imageMatrix];
     // Set tensor output [1, 4]
     final output = [List<double>.filled(outputTensor.shape[1], 0)];
 
-    // // Run inference
     await isolateInterpreter.run(input, output);
     // Get first output tensor
     final result = output.first;
     double maxScore = result.reduce((a, b) => a + b);
-    print("input shape: ${inputTensor.shape}");
-    print("output shape: ${outputTensor.shape}");
-    print(result);
 
     var classification = <String, double>{};
     for (var i = 0; i < result.length; i++) {
@@ -112,12 +83,10 @@ class ImageClassificationService {
       }
     }
 
-    print(classification);
-    print(maxScore);
+    return ModelResult.fromJson(classification);
   }
 
   Future<void> close() async {
-    interpreter.close();
     isolateInterpreter.close();
   }
 }

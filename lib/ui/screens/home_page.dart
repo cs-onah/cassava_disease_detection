@@ -18,7 +18,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    imageClassificationHelper.initHelper();
+    imageClassificationHelper.init();
     ImageUtil.requestImagePermissions();
     super.initState();
   }

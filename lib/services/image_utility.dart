@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
+import 'package:image/image.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -92,5 +93,28 @@ class ImageUtil {
       log("Image Utils: Image Permissions Request failed");
     }
     return success;
+  }
+
+  /// Generates a matrix of pixels
+  ///
+  /// illustration:
+  /// ---------------------------
+  /// | (R,G,B) (R,G,B) (R,G,B) |
+  /// | (R,G,B) (R,G,B) (R,G,B) |
+  /// ---------------------------
+  static List<List<List<int>>> getPixelMatrix(Image image) {
+    /// Image.width and Image.height property describes how many pixels
+    /// is arranged vertically and horizontally.
+    /// Hence width and height can be used as coordinates to access each pixel.
+    return List.generate(
+      image.height,
+      (y) => List.generate(
+        image.width,
+        (x) {
+          final pixel = image.getPixel(x, y);
+          return [pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt()];
+        },
+      ),
+    );
   }
 }
