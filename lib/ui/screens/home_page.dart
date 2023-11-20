@@ -1,10 +1,10 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:plant_disease_detection/services/image_classification_service.dart';
 import 'package:plant_disease_detection/services/image_utility.dart';
-import 'package:image/image.dart' as img;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -42,14 +42,10 @@ class _HomePageState extends State<HomePage> {
     // pick image
     File? file = await ImageUtil.pickImage(source: ImageSource.gallery);
     if (file == null) return;
-
-    // Read image bytes from file
-    final imageData = file.readAsBytesSync();
-
-    // Decode image using package:image/image.dart (https://pub.dev/image)
-    img.Image? image = img.decodeImage(imageData);
+    final image = await ImageUtil.convertFileToImageData(file);
     if (image == null) return;
     final classification = await imageClassificationHelper.processImage(image);
+    log(classification.toJson().toString() ?? '');
   }
 
   @override

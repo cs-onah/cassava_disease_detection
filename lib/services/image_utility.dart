@@ -17,6 +17,11 @@ class ImageUtil {
     '.gif',
   ];
 
+  static Future<Image?> convertFileToImageData(File file) async {
+    final imageData = file.readAsBytesSync();
+    return decodeImage(imageData);
+  }
+
   static Future<String> localFileToBase64(File file) async {
     Uint8List imageBytes = await file.readAsBytes();
     String base64string = base64.encode(imageBytes);

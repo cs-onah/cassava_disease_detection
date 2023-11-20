@@ -43,7 +43,7 @@ class ImageClassificationService {
     inputTensor = interpreter.getInputTensors().first;
 
     /// actual shape: [1, 4]
-    /// 2-D shape; representing 1 row, 4 columns
+    /// 2-D shape; (batch_size, num_classes)
     outputTensor = interpreter.getOutputTensors().first;
 
     log("input shape: ${inputTensor.shape}");
