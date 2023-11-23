@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:plant_disease_detection/helpers/context_extension.dart';
+import 'package:plant_disease_detection/services/image_classification_service.dart';
 import 'package:plant_disease_detection/services/image_utility.dart';
+import 'package:plant_disease_detection/ui/screens/result_page.dart';
 import 'package:plant_disease_detection/ui/theme/colors.dart';
 import 'package:plant_disease_detection/ui/widgets/media_source_dialog.dart';
 
@@ -13,6 +15,14 @@ class SelectScanPage extends StatefulWidget {
 }
 
 class _SelectScanPageState extends State<SelectScanPage> {
+  final service = ImageClassificationService();
+
+  @override
+  void initState() {
+    service.init();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -26,64 +36,81 @@ class _SelectScanPageState extends State<SelectScanPage> {
         backgroundColor: Colors.transparent,
         body: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Spacer(),
-              Card(
-                elevation: 0,
-                color: AppColors.transparentWhite,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Select Scan type",
-                        style: context.textTheme.displayLarge,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        "The selected scan type determines the type of result presented",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      const SizedBox(height: 18),
-                      ScanOptionCard(
-                        title: "Identify disease",
-                        description: "This option uses the model to predict "
-                            "the most likely disease identified in the image of the cassava leave",
-                        icon: Icon(Icons.energy_savings_leaf_outlined),
-                        onTap: () async {
-                          final file = await pickImage();
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      ScanOptionCard(
-                        title: "Run scan",
-                        description: "This option uses the model to predict the"
-                            " likelihood that the cassava leaf has any of the different diseases",
-                        icon: Icon(Icons.compare_outlined),
-                        onTap: () async {
-                          final file = await pickImage();
-                        },
-                      ),
-                    ],
+          child: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                BackButton(color: Colors.white, onPressed: context.pop),
+                Spacer(),
+                Card(
+                  elevation: 0,
+                  color: AppColors.transparentWhite,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Select Scan type",
+                          style: context.textTheme.displayLarge,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "The selected scan type determines the type of result presented",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        const SizedBox(height: 18),
+                        ScanOptionCard(
+                          title: "Identify disease",
+                          description: "This option uses the model to predict "
+                              "the most likely disease identified in the image of the cassava leave",
+                          icon: Icon(Icons.energy_savings_leaf_outlined),
+                          onTap: () => scanImage(true),
+                        ),
+                        const SizedBox(height: 16),
+                        ScanOptionCard(
+                          title: "Run scan",
+                          description: "This option uses the model to predict the"
+                              " likelihood that the cassava leaf has any of the different diseases",
+                          icon: Icon(Icons.compare_outlined),
+                          onTap: () => scanImage(false),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Future<File?> pickImage() async {
+  Future scanImage(bool isSingleResult) async {
+    // select image source
     final source = await MediaSourceDialog.pickSource(context);
-    if(source == null) return null;
-    return await ImageUtil.pickImage(source: source);
+    if (source == null) return null;
+
+    // pick file
+    final file = await ImageUtil.pickImage(source: source);
+    if (file == null) return;
+
+    //process file
+    context.showLoading();
+    final image = await ImageUtil.convertFileToImageData(file);
+    if (image == null) return;
+    final result = await service.processImage(image);
+    await Future.delayed(Duration(seconds: 2));
+    context.pop();
+
+    // display results
+    context.push(
+      ResultPage(image: file, result: result, isSingleResult: isSingleResult),
+    );
   }
 }
 
@@ -129,10 +156,17 @@ class ScanOptionCard extends StatelessWidget {
                 children: [
                   Text(
                     title ?? "--",
-                    style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold,),
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 8),
-                  Text(description ?? "--", style: TextStyle(color: Colors.white.withOpacity(.8)),),
+                  Text(
+                    description ?? "--",
+                    style: TextStyle(color: Colors.white.withOpacity(.8)),
+                  ),
                 ],
               ),
             )

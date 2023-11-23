@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 extension BuildContextExt on BuildContext {
   ThemeData get themeData => Theme.of(this);
@@ -26,16 +27,16 @@ extension BuildContextExt on BuildContext {
   double get width => MediaQuery.of(this).size.width;
 
   // AppColorExtension get colors => customTheme<AppColorExtension>();
-  //
-  // void showLoading() => showDialog(
-  //       context: this,
-  //       barrierDismissible: false,
-  //       useRootNavigator: true,
-  //       builder: (_) => WillPopScope(
-  //         onWillPop: () async => false,
-  //         child: AppLoadingIndicator(),
-  //       ),
-  //     );
+
+  void showLoading() => showDialog(
+        context: this,
+        barrierDismissible: false,
+        useRootNavigator: true,
+        builder: (_) => WillPopScope(
+          onWillPop: () async => false,
+          child: LoadingAnimationWidget.inkDrop(color: Colors.white, size: 60),
+        ),
+      );
 
   void showErrorSnackBar(dynamic error) =>
       ScaffoldMessenger.of(this).showSnackBar(
