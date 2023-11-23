@@ -17,6 +17,7 @@ dependencies:
   tflite_flutter:
   camera:
   permission_handler:
+  loading_animation_widget: ^1.2.0+4
 
 dev_dependencies:
   flutter_lints: ^2.0.0

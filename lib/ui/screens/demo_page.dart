@@ -7,14 +7,14 @@ import 'package:plant_disease_detection/models/model_result.dart';
 import 'package:plant_disease_detection/services/image_classification_service.dart';
 import 'package:plant_disease_detection/services/image_utility.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class DemoPage extends StatefulWidget {
+  const DemoPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<DemoPage> createState() => _DemoPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _DemoPageState extends State<DemoPage> {
   final imageClassificationHelper = ImageClassificationService();
   File? file;
   ModelResult? result;
