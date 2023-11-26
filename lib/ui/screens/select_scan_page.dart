@@ -38,7 +38,13 @@ class _SelectScanPageState extends State<SelectScanPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                BackButton(color: Colors.white, onPressed: context.pop),
+                Row(
+                  children: [
+                    BackButton(color: Colors.white, onPressed: context.pop),
+                    const SizedBox(width: 8),
+                    Text("Select Scan", style: context.textTheme.displayMedium),
+                  ],
+                ),
                 Spacer(),
                 Card(
                   elevation: 0,
@@ -80,6 +86,7 @@ class _SelectScanPageState extends State<SelectScanPage> {
                     ),
                   ),
                 ),
+                Spacer(),
               ],
             ),
           ),

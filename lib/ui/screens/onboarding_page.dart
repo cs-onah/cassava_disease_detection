@@ -23,12 +23,24 @@ class OnboardingPage extends StatelessWidget {
             child: Column(
               children: [
                 Spacer(),
-                Row(
-                  children: [
-                    Text("CP-Scan", style: context.textTheme.displayLarge?.copyWith(fontSize: 36)),
-                    const SizedBox(width: 8),
-                    Image.asset("assets/images/logo.png", height: 60),
-                  ],
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(.7),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  padding: EdgeInsets.all(10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "L-Scan",
+                        style: context.textTheme.displayLarge
+                            ?.copyWith(fontSize: 36),
+                      ),
+                      const SizedBox(width: 8),
+                      Image.asset("assets/images/logo.png", height: 60),
+                    ],
+                  ),
                 ),
                 Spacer(),
                 Text(
@@ -42,7 +54,7 @@ class OnboardingPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 40),
                 ElevatedButton(
-                  onPressed: ()=> context.push(SelectScanPage()),
+                  onPressed: () => context.push(SelectScanPage()),
                   child: Text("Start Now"),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.transparentWhite,
