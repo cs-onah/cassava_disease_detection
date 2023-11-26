@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:plant_disease_detection/helpers/context_extension.dart';
 import 'package:plant_disease_detection/services/image_classification_service.dart';
