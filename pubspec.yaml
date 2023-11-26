@@ -19,19 +19,18 @@ dependencies:
   permission_handler:
   loading_animation_widget: ^1.2.0+4
 
-
 dev_dependencies:
   flutter_lints: ^2.0.0
-  flutter_launcher_icons: "^0.12.0"
+  flutter_launcher_icons: "^0.13.1"
+
+flutter_launcher_icons:
+  image_path: "assets/images/launcher_icon.png"
+  android: "ic_launcher"
+  ios: true
+  remove_alpha_ios: true
 
 flutter:
   uses-material-design: true
   assets:
     - assets/images/
     - assets/models/
-
-flutter_launcher_icons:
-  image_path: "assets/images/logo.png"
-  android: "ic_launcher"
-  ios: true
-  remove_alpha_ios: true

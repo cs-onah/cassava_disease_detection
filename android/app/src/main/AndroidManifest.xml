@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
    <application
-        android:label="Plant Disease Detection"
+        android:label="L-Scan"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
