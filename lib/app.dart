@@ -6,7 +6,7 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   // App Expires 15th december
-  bool get isExpired => DateTime.now().isAfter(DateTime(2023, 12, 15));
+  bool get isExpired => DateTime.now().isAfter(DateTime(2024, 1, 1));
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +28,12 @@ class ErrorPage extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
-            Text("404", style: TextStyle(fontSize: 100, fontWeight: FontWeight.bold) ),
-            const SizedBox(height: 30),
+          children: const [
+            Text(
+              "404",
+              style: TextStyle(fontSize: 100, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 30),
             Text("An Unknown error occured"),
           ],
         ),
@@ -38,4 +41,3 @@ class ErrorPage extends StatelessWidget {
     );
   }
 }
-
