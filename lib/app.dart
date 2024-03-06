@@ -6,7 +6,7 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   // App Expires 15th december
-  bool get isExpired => DateTime.now().isAfter(DateTime(2024, 1, 1));
+  bool get isExpired => DateTime.now().isAfter(DateTime(2024, 5, 1));
 
   @override
   Widget build(BuildContext context) {
