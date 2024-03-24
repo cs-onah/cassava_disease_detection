@@ -153,14 +153,14 @@ class ResultInfo extends StatelessWidget {
             alignment: Alignment.center,
             children: [
               Text(
-                "${((value ?? 0) * 100).toStringAsFixed(1)}%",
+                "${(value ?? 0).toStringAsFixed(1)}%",
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
               ),
               SizedBox(
                 height: 50,
                 width: 50,
                 child: CircularProgressIndicator(
-                  value: value,
+                  value: ((value ?? 0) / 100),
                   strokeWidth: 5,
                   backgroundColor: context.primaryColor.withOpacity(.1),
                   valueColor: AlwaysStoppedAnimation<Color>(

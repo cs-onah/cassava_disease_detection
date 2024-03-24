@@ -29,10 +29,10 @@ class ModelResult {
       );
 
   factory ModelResult.fromJson(Map<String, dynamic> json) => ModelResult(
-        mosaic: json["Mosaic"]?.toDouble() ?? 0,
-        blight: json["Blight"]?.toDouble() ?? 0,
-        brownStreak: json["Brown Streak"]?.toDouble() ?? 0,
-        greenMite: json["Green Mite"]?.toDouble() ?? 0,
+        mosaic: json["Mosaic_N"]?.toDouble() ?? 0,
+        blight: json["blight_N"]?.toDouble() ?? 0,
+        brownStreak: json["brownstreak_N"]?.toDouble() ?? 0,
+        greenMite: json["greenmite_N"]?.toDouble() ?? 0,
       );
 
   Map<String, dynamic> toJson() => {
