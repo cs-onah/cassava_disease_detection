@@ -31,10 +31,8 @@ class DjangoService {
         onSendProgress: (_, __) {},
       );
       return ModelResult.fromJson(response.data);
-    } on DioException catch (error) {
-      rethrow;
     } catch (error) {
-      rethrow;
+      throw "Image processing failed.";
     }
   }
 }
