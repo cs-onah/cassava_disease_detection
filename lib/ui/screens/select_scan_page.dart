@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plant_disease_detection/helpers/context_extension.dart';
+import 'package:plant_disease_detection/services/django_service.dart';
 import 'package:plant_disease_detection/services/image_classification_service.dart';
 import 'package:plant_disease_detection/services/image_utility.dart';
 import 'package:plant_disease_detection/ui/screens/result_page.dart';
@@ -72,15 +73,16 @@ class _SelectScanPageState extends State<SelectScanPage> {
                           description: "This option uses the model to predict "
                               "the most likely disease identified in the image of the cassava leave",
                           icon: Icon(Icons.energy_savings_leaf_outlined),
-                          onTap: () => scanImage(true),
+                          onTap: () => runServerAnalysis(true),
                         ),
                         const SizedBox(height: 16),
                         ScanOptionCard(
                           title: "Run scan",
-                          description: "This option uses the model to predict the"
+                          description:
+                              "This option uses the model to predict the"
                               " likelihood that the cassava leaf has any of the different diseases",
                           icon: Icon(Icons.compare_outlined),
-                          onTap: () => scanImage(false),
+                          onTap: () => runServerAnalysis(false),
                         ),
                       ],
                     ),
@@ -95,7 +97,49 @@ class _SelectScanPageState extends State<SelectScanPage> {
     );
   }
 
-  Future scanImage(bool isSingleResult) async {
+  Future runServerAnalysis(bool isSingleResult) async {
+    // select image source
+    final source = await MediaSourceDialog.pickSource(context);
+    if (source == null) return null;
+    // pick file
+    final file = await ImageUtil.pickImage(source: source);
+    if (file == null) return;
+    context.showLoading();
+    try {
+      final result = await DjangoService().runImageAnalysis(file);
+      if (result.blight < 50 &&
+          result.brownStreak < 50 &&
+          result.greenMite < 50 &&
+          result.mosaic < 50) {
+        context.pop();
+        showRejectImageDialog();
+        return;
+      }
+      context.pop();
+      context.push(
+        ResultPage(image: file, result: result, isSingleResult: isSingleResult),
+      );
+    } catch (error) {
+      context.pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Row(
+            children: [
+              const Icon(Icons.cancel, color: Colors.white),
+              const SizedBox(width: 10),
+              Expanded(
+                  child: Text("$error",
+                      style: const TextStyle(color: Colors.white))),
+            ],
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future runLocalAnalysis(bool isSingleResult) async {
     // select image source
     final source = await MediaSourceDialog.pickSource(context);
     if (source == null) return null;
@@ -115,6 +159,42 @@ class _SelectScanPageState extends State<SelectScanPage> {
     // display results
     context.push(
       ResultPage(image: file, result: result, isSingleResult: isSingleResult),
+    );
+  }
+
+  showRejectImageDialog() {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return Dialog(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.error_outline, color: Colors.orange, size: 100),
+                SizedBox(height: 10),
+                Text(
+                  "Image Rejected",
+                  style:
+                  TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  "The selected file does not seem to be an image of a leaf."
+                      "\nPlease re-take the photo.",
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 10),
+                TextButton(
+                  onPressed: Navigator.of(context).pop,
+                  child: Text("Dismiss"),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -46,7 +46,7 @@ class ImageUtil {
   }) async {
     XFile? file = await ImagePicker().pickImage(
       source: source,
-      imageQuality: quality,
+      // imageQuality: quality,
     );
 
     if (file == null) return null;
