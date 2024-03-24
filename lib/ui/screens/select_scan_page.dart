@@ -72,7 +72,7 @@ class _SelectScanPageState extends State<SelectScanPage> {
                           title: "Identify disease",
                           description: "This option uses the model to predict "
                               "the most likely disease identified in the image of the cassava leave",
-                          icon: Icon(Icons.energy_savings_leaf_outlined),
+                          icon: Icon(Icons.science_outlined),
                           onTap: () => runServerAnalysis(true),
                         ),
                         const SizedBox(height: 16),
@@ -81,7 +81,7 @@ class _SelectScanPageState extends State<SelectScanPage> {
                           description:
                               "This option uses the model to predict the"
                               " likelihood that the cassava leaf has any of the different diseases",
-                          icon: Icon(Icons.compare_outlined),
+                          icon: Icon(Icons.compare),
                           onTap: () => runServerAnalysis(false),
                         ),
                       ],
@@ -246,7 +246,7 @@ class ScanOptionCard extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
                   Text(
                     description ?? "--",
                     style: TextStyle(color: Colors.white.withOpacity(.8)),

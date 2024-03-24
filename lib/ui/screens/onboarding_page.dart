@@ -55,9 +55,13 @@ class OnboardingPage extends StatelessWidget {
                 const SizedBox(height: 40),
                 ElevatedButton(
                   onPressed: () => context.push(SelectScanPage()),
-                  child: Text("Start Now"),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.transparentWhite,
+                  ),
+                  child: Text(
+                    "Start Now",
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ),
                 const SizedBox(height: 40),
