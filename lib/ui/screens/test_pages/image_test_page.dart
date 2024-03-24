@@ -47,14 +47,9 @@ class _ImageTestPageState extends State<ImageTestPage> {
       height: 244,
     );
 
-    print(imageInput.height);
-    print(imageInput.width);
-
     List<int> pngBytes = im.encodeJpg(imageInput);
-
     // Convert to Uint8List
     uint8List = Uint8List.fromList(pngBytes);
-
     setState(() {});
   }
 }

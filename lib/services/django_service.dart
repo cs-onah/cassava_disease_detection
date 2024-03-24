@@ -23,9 +23,7 @@ class DjangoService {
         url,
         data: data,
         options: Options(
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          headers: {"Content-Type": "multipart/form-data"},
           method: 'POST',
         ),
         onSendProgress: (_, __) {},

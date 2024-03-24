@@ -176,13 +176,12 @@ class _SelectScanPageState extends State<SelectScanPage> {
                 SizedBox(height: 10),
                 Text(
                   "Image Rejected",
-                  style:
-                  TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 8),
                 Text(
                   "The selected file does not seem to be an image of a leaf."
-                      "\nPlease re-take the photo.",
+                  "\nPlease re-take the photo.",
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 10),
