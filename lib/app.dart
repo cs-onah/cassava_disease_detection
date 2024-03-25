@@ -5,8 +5,7 @@ import 'package:plant_disease_detection/ui/theme/app_theme.dart';
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // App Expires 15th december
-  bool get isExpired => DateTime.now().isAfter(DateTime(2024, 5, 1));
+  bool get isExpired => false;
 
   @override
   Widget build(BuildContext context) {
