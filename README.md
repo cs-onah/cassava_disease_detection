@@ -8,6 +8,8 @@ The model can identify the following diseases:
 * Brown Streak
 * Green Mite
 
+👉Download now: (Google Drive)[https://drive.google.com/file/d/1FalkLrz-25kQashvQlBDmPV5K-0uxiqF/view?usp=drive_link]
+
 <p align="center">
     <img width="280" height="567" src="https://github.com/cs-onah/cassava_disease_detection/blob/main/docs/image.png" alt="Loading photo" loading="eager">
     <img width="280" height="567" src="https://github.com/cs-onah/cassava_disease_detection/blob/main/docs/anim.gif" alt="Loading demo..." loading="eager">
