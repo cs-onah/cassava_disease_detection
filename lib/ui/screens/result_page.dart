@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:plant_disease_detection/helpers/context_extension.dart';
 import 'package:plant_disease_detection/models/model_result.dart';
+import 'package:plant_disease_detection/ui/widgets/credits_widget.dart';
 
 class ResultPage extends StatelessWidget {
   final File image;
