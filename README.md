@@ -1,6 +1,14 @@
 # plant_disease_detection 🦠
 
-A flutter app that detects select diseases in cassava plant leaves using an Image Classification model.
+A flutter app that detects diseases in cassava plant leaves using an Image Classification model.
+
+The model can identify the following diseases:
+* Mosaic
+* Blight
+* Brown Streak
+* Green Mite
+
+>>> Download now: [plant_disease_detection.apk]
 
 <p align="center">
     <img width="280" height="567" src="https://github.com/cs-onah/cassava_disease_detection/blob/main/docs/image.png">
