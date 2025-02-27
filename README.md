@@ -9,8 +9,8 @@ The model can identify the following diseases:
 * Green Mite
 
 <p align="center">
-    <img width="280" height="567" src="https://github.com/cs-onah/cassava_disease_detection/blob/main/docs/image.png">
-    <img width="280" height="567" src="https://github.com/cs-onah/cassava_disease_detection/blob/main/docs/anim.gif">
+    <img width="280" height="567" src="https://github.com/cs-onah/cassava_disease_detection/blob/main/docs/image.png" alt="Loading photo">
+    <img width="280" height="567" src="https://github.com/cs-onah/cassava_disease_detection/blob/main/docs/anim.gif" alt="Loading demo...">
 </p>
 
 ## Getting Started
@@ -18,3 +18,7 @@ The model can identify the following diseases:
 Clone the repository and run `flutter pub get` in the root of the project
 
 You can run `flutter run` to start the app on your device or emulator.
+
+### Notices
+
+Remember to star ⭐️ this repository if you find it useful.
