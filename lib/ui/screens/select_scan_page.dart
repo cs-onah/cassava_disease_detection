@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plant_disease_detection/helpers/context_extension.dart';
-import 'package:plant_disease_detection/services/django_service.dart';
+import 'package:plant_disease_detection/services/deprecated/django_service.dart';
+import 'package:plant_disease_detection/services/deprecated/image_classification_service_trial.dart';
 import 'package:plant_disease_detection/services/image_classification_service.dart';
 import 'package:plant_disease_detection/services/image_utility.dart';
 import 'package:plant_disease_detection/ui/screens/result_page.dart';
@@ -14,14 +15,6 @@ class SelectScanPage extends StatefulWidget {
 }
 
 class _SelectScanPageState extends State<SelectScanPage> {
-  final service = ImageClassificationService();
-
-  @override
-  void initState() {
-    service.init();
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -73,7 +66,7 @@ class _SelectScanPageState extends State<SelectScanPage> {
                           description: "This option uses the model to predict "
                               "the most likely disease identified in the image of the cassava leave",
                           icon: Icon(Icons.science_outlined),
-                          onTap: () => runServerAnalysis(true),
+                          onTap: () => processImage(true),
                         ),
                         const SizedBox(height: 16),
                         ScanOptionCard(
@@ -82,7 +75,7 @@ class _SelectScanPageState extends State<SelectScanPage> {
                               "This option uses the model to predict the"
                               " likelihood that the cassava leaf has any of the different diseases",
                           icon: Icon(Icons.compare),
-                          onTap: () => runServerAnalysis(false),
+                          onTap: () => processImage(false),
                         ),
                       ],
                     ),
@@ -97,7 +90,7 @@ class _SelectScanPageState extends State<SelectScanPage> {
     );
   }
 
-  Future runServerAnalysis(bool isSingleResult) async {
+  Future processImage(bool isSingleResult) async {
     // select image source
     final source = await MediaSourceDialog.pickSource(context);
     if (source == null) return null;
@@ -106,11 +99,9 @@ class _SelectScanPageState extends State<SelectScanPage> {
     if (file == null) return;
     context.showLoading();
     try {
-      final result = await DjangoService().runImageAnalysis(file);
-      if (result.blight < 50 &&
-          result.brownStreak < 50 &&
-          result.greenMite < 50 &&
-          result.mosaic < 50) {
+      final result = await ImageClassificationService.processImage(file);
+      await Future.delayed(Duration(seconds: 1)); // Simulate delay
+      if (result.invalidResult) {
         context.pop();
         showRejectImageDialog();
         return;
@@ -129,37 +120,17 @@ class _SelectScanPageState extends State<SelectScanPage> {
               const Icon(Icons.cancel, color: Colors.white),
               const SizedBox(width: 10),
               Expanded(
-                  child: Text("$error",
-                      style: const TextStyle(color: Colors.white))),
+                child: Text(
+                  "$error",
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
             ],
           ),
           backgroundColor: Colors.red,
         ),
       );
     }
-  }
-
-  Future runLocalAnalysis(bool isSingleResult) async {
-    // select image source
-    final source = await MediaSourceDialog.pickSource(context);
-    if (source == null) return null;
-
-    // pick file
-    final file = await ImageUtil.pickImage(source: source);
-    if (file == null) return;
-
-    //process file
-    context.showLoading();
-    final image = await ImageUtil.convertFileToImageData(file);
-    if (image == null) return;
-    final result = await service.processImage(image);
-    await Future.delayed(Duration(seconds: 2));
-    context.pop();
-
-    // display results
-    context.push(
-      ResultPage(image: file, result: result, isSingleResult: isSingleResult),
-    );
   }
 
   showRejectImageDialog() {

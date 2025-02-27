@@ -8,6 +8,10 @@ class ModelResult {
 
   double get solution => [mosaic, blight, brownStreak, greenMite].reduce(max);
 
+  bool get invalidResult {
+    return blight < 50 && brownStreak < 50 && greenMite < 50 && mosaic < 50;
+  }
+
   ModelResult({
     this.mosaic = 0,
     this.blight = 0,

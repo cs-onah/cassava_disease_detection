@@ -1,35 +1,79 @@
 import 'dart:developer';
-
-import 'package:flutter/services.dart';
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:image/image.dart';
 import 'package:plant_disease_detection/models/model_result.dart';
-import 'package:plant_disease_detection/services/image_utility.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 
-/// Process image using model and provides classification output
-///
-/// initialize using [init]
-/// process image using [processImage]
-/// dispose using [close]
 class ImageClassificationService {
-  static const modelPath = 'assets/models/plant_disease_detection_v2.tflite';
-  static const labelsPath = 'assets/models/labels.txt';
-
-  late final IsolateInterpreter isolateInterpreter;
-  late Tensor inputTensor;
-  late Tensor outputTensor;
-  List<String> labels = [];
-
-  Future<void> init() async {
-    await _loadModel();
-    await _loadLabels();
+  /// Resizes image to 224x224 pixels and returns [Image]
+  static Image loadAndResizeImage(File file) {
+    final img = decodeImage(file.readAsBytesSync())!;
+    return copyResize(img, width: 224, height: 224);
   }
 
-  Future<void> _loadModel() async {
-    final interpreter = await Interpreter.fromAsset(modelPath);
-    isolateInterpreter = await IsolateInterpreter.create(
-      address: interpreter.address,
+  /// Convert the image to a 3-channel RGB format and normalize pixel values to [-1, 1]
+  static List<double> convertImage(Image image) {
+    final inputBuffer = Float32List(224 * 224 * 3); // Shape: [224, 224, 3]
+    var index = 0;
+
+    for (var y = 0; y < 224; y++) {
+      for (var x = 0; x < 224; x++) {
+        final pixel = image.getPixel(x, y);
+
+        // Normalize pixel values to [-1, 1]
+        inputBuffer[index++] = (pixel.r / 127.5) - 1.0; // Red channel
+        inputBuffer[index++] = (pixel.g / 127.5) - 1.0; // Green channel
+        inputBuffer[index++] = (pixel.b / 127.5) - 1.0; // Blue channel
+      }
+    }
+
+    return inputBuffer.toList();
+  }
+
+  /// Reshape the image to [1, 224, 224, 3]
+  static List<List<List<List<double>>>> reshapeImage(List<double> imageData) {
+    final reshapedImage = List.generate(
+      1, // Batch size
+      (_) => List.generate(
+        224, // Height
+        (y) => List.generate(
+          224, // Width
+          (x) => List.generate(
+            3, // Channels
+            (c) => imageData[(y * 224 * 3) + (x * 3) + c],
+          ),
+        ),
+      ),
     );
+    return reshapedImage;
+  }
+
+  /// Maps disease name to disease probability
+  static ModelResult parseOutput(
+    Map<int, String> classesDict,
+    List<double> probs,
+  ) {
+    final result = <String, double>{};
+    for (var i = 0; i < probs.length; i++) {
+      result.addAll(
+        {classesDict[i]!: double.parse((probs[i] * 100).toStringAsFixed(2))},
+      );
+    }
+    return ModelResult.fromJson(result);
+  }
+
+  /// Returns result from classification
+  static Future<ModelResult> processImage(File uploadedImage) async {
+    const modelPath = "assets/models/plant_disease_detection_v2.tflite";
+    final classesDict = {
+      0: 'Mosaic_N',
+      1: 'blight_N',
+      2: 'brownstreak_N',
+      3: 'greenmite_N'
+    };
+
+    final interpreter = await Interpreter.fromAsset(modelPath);
 
     /// Actual shape: [1, 224, 224, 3]
     /// Uses the NHWC format, typically used to collect images for models
@@ -40,53 +84,26 @@ class ImageClassificationService {
     /// C: Number of channels (e.g., 3 for RGB images, 1 for grayscale)
     ///
     /// NOTE: Some models can require a different format
-    inputTensor = interpreter.getInputTensors().first;
+    final inputTensor = interpreter.getInputTensors().first;
 
     /// actual shape: [1, 4]
     /// 2-D shape; (batch_size, num_classes)
-    outputTensor = interpreter.getOutputTensors().first;
+    final outputTensor = interpreter.getOutputTensors().first;
 
     log("input shape: ${inputTensor.shape}");
     log("output shape: ${outputTensor.shape}");
-    log('Model loaded successfully');
-  }
 
-  Future<void> _loadLabels() async {
-    final labelTxt = await rootBundle.loadString(labelsPath);
-    labels = labelTxt.split('\n');
-  }
+    final image = loadAndResizeImage(uploadedImage);
+    final preprocessed = convertImage(image);
+    final shape = reshapeImage(preprocessed);
 
-  Future<ModelResult> processImage(Image image) async {
-    // resize original image to match model required input shape.
-    Image imageInput = copyResize(
-      image,
-      width: inputTensor.shape[1],
-      height: inputTensor.shape[2],
-    );
+    final output = List<double>.filled(classesDict.length, 0)
+        .reshape([1, classesDict.length]);
 
-    final imageMatrix = ImageUtil.getPixelMatrix(imageInput);
+    /// Run classification
+    interpreter.run(shape, output);
 
-    // Set tensor input [1, 224, 224, 3]
-    final input = [imageMatrix];
-    // Set tensor output [1, 4]
-    final output = [List<double>.filled(outputTensor.shape[1], 0)];
-
-    await isolateInterpreter.run(input, output);
-    // Get first output tensor
-    final result = output.first;
-    double maxScore = result.reduce((a, b) => a + b);
-
-    var classification = <String, double>{};
-    for (var i = 0; i < result.length; i++) {
-      if (result[i] != 0) {
-        classification[labels[i]] = result[i].toDouble() / maxScore;
-      }
-    }
-
-    return ModelResult.fromJson(classification);
-  }
-
-  Future<void> close() async {
-    isolateInterpreter.close();
+    final probability = output[0];
+    return parseOutput(classesDict, probability);
   }
 }

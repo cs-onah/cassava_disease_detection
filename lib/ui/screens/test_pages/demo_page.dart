@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:plant_disease_detection/models/model_result.dart';
 import 'package:plant_disease_detection/services/image_classification_service.dart';
-import 'package:plant_disease_detection/services/image_classification_service_two.dart';
 import 'package:plant_disease_detection/services/image_utility.dart';
 
 class DemoPage extends StatefulWidget {
@@ -118,9 +117,7 @@ class _DemoPageState extends State<DemoPage> {
     ); // show Loader
     final image = await ImageUtil.convertFileToImageData(file!);
     if (image == null) return;
-    Map<String, dynamic> response = await ImageClassificationServiceTwo.imageUpload(file!);
-    print(response);
-    result = ModelResult.fromJson(response);
+    result = await ImageClassificationService.processImage(file!);
     Navigator.of(context).pop(); // pop Loader
     log(result?.toJson().toString() ?? '');
     setState(() {});
