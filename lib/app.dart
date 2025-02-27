@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plant_disease_detection/ui/screens/onboarding_page.dart';
+import 'package:plant_disease_detection/ui/screens/test_pages/demo_page.dart';
 import 'package:plant_disease_detection/ui/theme/app_theme.dart';
 
 class MyApp extends StatelessWidget {
@@ -10,7 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: isExpired ? ErrorPage() : OnboardingPage(),
+      home: isExpired ? ErrorPage() : DemoPage(),
       theme: appTheme,
       themeMode: ThemeMode.light,
       debugShowCheckedModeBanner: false,

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:plant_disease_detection/models/model_result.dart';
 import 'package:plant_disease_detection/services/image_classification_service.dart';
+import 'package:plant_disease_detection/services/image_classification_service_two.dart';
 import 'package:plant_disease_detection/services/image_utility.dart';
 
 class DemoPage extends StatefulWidget {
@@ -15,13 +16,11 @@ class DemoPage extends StatefulWidget {
 }
 
 class _DemoPageState extends State<DemoPage> {
-  final imageClassificationHelper = ImageClassificationService();
   File? file;
   ModelResult? result;
 
   @override
   void initState() {
-    imageClassificationHelper.init();
     ImageUtil.requestImagePermissions();
     super.initState();
   }
@@ -100,7 +99,7 @@ class _DemoPageState extends State<DemoPage> {
           Text(name),
           Spacer(),
           Text(
-            "${(value * 100).toStringAsFixed(2)} %",
+            "${value.toStringAsFixed(2)} %",
             style: TextStyle(
               color: value >= solution ? Colors.green[800] : Colors.red[600],
             ),
@@ -119,15 +118,11 @@ class _DemoPageState extends State<DemoPage> {
     ); // show Loader
     final image = await ImageUtil.convertFileToImageData(file!);
     if (image == null) return;
-    result = await imageClassificationHelper.processImage(image);
+    Map<String, dynamic> response = await ImageClassificationServiceTwo.imageUpload(file!);
+    print(response);
+    result = ModelResult.fromJson(response);
     Navigator.of(context).pop(); // pop Loader
     log(result?.toJson().toString() ?? '');
     setState(() {});
-  }
-
-  @override
-  void dispose() {
-    imageClassificationHelper.close();
-    super.dispose();
   }
 }
