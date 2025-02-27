@@ -9,8 +9,8 @@ The model can identify the following diseases:
 * Green Mite
 
 <p align="center">
-    <img width="280" height="567" src="https://github.com/cs-onah/cassava_disease_detection/blob/main/docs/image.png" alt="Loading photo">
-    <img width="280" height="567" src="https://github.com/cs-onah/cassava_disease_detection/blob/main/docs/anim.gif" alt="Loading demo...">
+    <img width="280" height="567" src="https://github.com/cs-onah/cassava_disease_detection/blob/main/docs/image.png" alt="Loading photo" loading="eager">
+    <img width="280" height="567" src="https://github.com/cs-onah/cassava_disease_detection/blob/main/docs/anim.gif" alt="Loading demo..." loading="eager">
 </p>
 
 ## Getting Started
