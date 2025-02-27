@@ -67,6 +67,15 @@ class ResultPage extends StatelessWidget {
             const SizedBox(height: 30),
 
             // Result section
+            Text(
+              "Scan Result",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 20),
             Builder(
               builder: (_) {
                 if (result == null) return SizedBox.shrink();

@@ -6,6 +6,7 @@ import 'package:plant_disease_detection/services/image_classification_service.da
 import 'package:plant_disease_detection/services/image_utility.dart';
 import 'package:plant_disease_detection/ui/screens/result_page.dart';
 import 'package:plant_disease_detection/ui/theme/colors.dart';
+import 'package:plant_disease_detection/ui/widgets/credits_widget.dart';
 import 'package:plant_disease_detection/ui/widgets/media_source_dialog.dart';
 
 class SelectScanPage extends StatefulWidget {
@@ -30,7 +31,7 @@ class _SelectScanPageState extends State<SelectScanPage> {
           padding: const EdgeInsets.all(8.0),
           child: SafeArea(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Row(
                   children: [
@@ -82,6 +83,7 @@ class _SelectScanPageState extends State<SelectScanPage> {
                   ),
                 ),
                 Spacer(),
+                CreditsWidget(),
               ],
             ),
           ),

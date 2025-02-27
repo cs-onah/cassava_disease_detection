@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:plant_disease_detection/helpers/context_extension.dart';
 import 'package:plant_disease_detection/ui/screens/select_scan_page.dart';
 import 'package:plant_disease_detection/ui/theme/colors.dart';
+import 'package:plant_disease_detection/ui/widgets/credits_widget.dart';
 
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});
@@ -19,7 +20,7 @@ class OnboardingPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(30.0),
+            padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
             child: Column(
               children: [
                 Spacer(),
@@ -65,6 +66,7 @@ class OnboardingPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 40),
+                CreditsWidget(),
               ],
             ),
           ),
