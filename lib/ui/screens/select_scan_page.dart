@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:plant_disease_detection/helpers/context_extension.dart';
 import 'package:plant_disease_detection/services/image_classifier.dart';
 import 'package:plant_disease_detection/services/image_utility.dart';
+import 'package:plant_disease_detection/ui/providers/model_threshold.dart';
 import 'package:plant_disease_detection/ui/screens/result_page.dart';
 import 'package:plant_disease_detection/ui/theme/colors.dart';
 import 'package:plant_disease_detection/ui/widgets/credits_widget.dart';
@@ -103,7 +104,7 @@ class _SelectScanPageState extends ConsumerState<SelectScanPage> {
       final model = ref.read(imageClassifier);
       final result = await model.processImage(file);
       debugPrint("${model.runtimeType} -> ${result.toJson()}");
-      if (result.invalidResult) {
+      if (result.invalidResult(ref.read(modelThresholdProvider))) {
         context.pop();
         showRejectImageDialog();
         return;

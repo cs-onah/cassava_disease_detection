@@ -8,9 +8,7 @@ class ModelResult {
 
   double get solution => [mosaic, blight, brownStreak, greenMite].reduce(max);
 
-  static const threshold = 50.0;
-
-  bool get invalidResult {
+  bool invalidResult(int threshold) {
     return blight < threshold &&
         brownStreak < threshold &&
         greenMite < threshold &&
