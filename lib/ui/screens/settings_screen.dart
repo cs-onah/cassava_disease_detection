@@ -89,7 +89,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           const SizedBox(height: 16),
                           Slider(
                             value: value.toDouble(),
-                            min: 1,
+                            min: 0,
                             max: 100,
                             divisions: 10,
                             onChanged: ref

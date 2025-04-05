@@ -104,9 +104,10 @@ class _SelectScanPageState extends ConsumerState<SelectScanPage> {
       final model = ref.read(imageClassifier);
       final result = await model.processImage(file);
       debugPrint("${model.runtimeType} -> ${result.toJson()}");
-      if (result.invalidResult(ref.read(modelThresholdProvider))) {
+      final threshold = ref.read(modelThresholdProvider);
+      if (result.invalidResult(threshold)) {
         context.pop();
-        showRejectImageDialog();
+        showRejectImageDialog(threshold);
         return;
       }
       context.pop();
@@ -136,7 +137,7 @@ class _SelectScanPageState extends ConsumerState<SelectScanPage> {
     }
   }
 
-  showRejectImageDialog() {
+  showRejectImageDialog([int? threshold]) {
     showDialog(
       context: context,
       builder: (_) {
@@ -154,8 +155,8 @@ class _SelectScanPageState extends ConsumerState<SelectScanPage> {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  "The selected file does not seem to be an image of a leaf."
-                  "\nPlease re-take the photo.",
+                  "The selected file does not seem to be an image of a leaf. "
+                  "Please re-take the photo. ${threshold == null ? "" : "\nModel threshold is at $threshold%"}",
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 10),
