@@ -5,6 +5,7 @@ import 'package:plant_disease_detection/services/image_classifier_http.dart';
 import 'package:plant_disease_detection/services/image_classifier_version2.dart';
 import 'package:plant_disease_detection/services/image_classifier_version3.dart';
 import 'package:plant_disease_detection/ui/providers/model_type_provider.dart';
+import 'package:plant_disease_detection/ui/widgets/credits_widget.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -20,17 +21,24 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text("Classifier Settings")),
-      body: ListView(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      body: Column(
         children: [
-          Text(
-            "Select Model",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  "Select Model",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "Your selection will determine which AI model processes the image",
+                ),
+                SizedBox(height: 20),
+              ],
+            ),
           ),
-          Text(
-            "Your selection will determine which AI model processes the image",
-          ),
-          const SizedBox(height: 20),
           ModelTypeTile(
             title: "Server model (HTTP)",
             subtitle: "This option allows your request to be processed "
@@ -52,6 +60,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             isSelected: modelType == ModelType.version3,
             onTap: () => notifier.changeType(ModelType.version3),
           ),
+          Spacer(),
+          CreditsWidget(textColor: Colors.black),
+          const SizedBox(height: 20),
         ],
       ),
     );
