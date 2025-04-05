@@ -42,21 +42,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ModelTypeTile(
             title: "Server model (HTTP)",
             subtitle: "This option allows your request to be processed "
-                "on a django server running the AI model",
+                "on a django server running the AI model. This option is slow "
+                "and has a max file size of ${ImageClassifierHttp.maxSizeInMb}MB",
             isSelected: modelType == ModelType.http,
             onTap: () => notifier.changeType(ModelType.http),
           ),
           ModelTypeTile(
             title: "Tensorflow Lite Model V2",
             subtitle: "This option allows process your image using "
-                "/models/plant_disease_detection_v2.tflite",
+                "plant_disease_detection_v2.tflite. This model has lower accuracy.",
             isSelected: modelType == ModelType.version2,
             onTap: () => notifier.changeType(ModelType.version2),
           ),
           ModelTypeTile(
             title: "Tensorflow Lite Model V3",
             subtitle: "This option allows process your image using "
-                "/models/plant_disease_detection_v3.tflite",
+                "plant_disease_detection_v3.tflite. This model has lower accuracy.",
             isSelected: modelType == ModelType.version3,
             onTap: () => notifier.changeType(ModelType.version3),
           ),

@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:image/image.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,6 +17,18 @@ class ImageUtil {
     '.png',
     '.gif',
   ];
+
+  /// Returns file size in MB
+  static Future<double?> getFileSize(File file) async {
+    try {
+      final fileSizeInBytes = await file.length();
+      const mb = 1024 * 1024;
+      return fileSizeInBytes / mb;
+    } catch (e) {
+      debugPrint('Error: $e');
+      return null;
+    }
+  }
 
   static Future<Image?> convertFileToImageData(File file) async {
     final imageData = file.readAsBytesSync();

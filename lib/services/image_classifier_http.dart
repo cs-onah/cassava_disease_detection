@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:plant_disease_detection/models/model_result.dart';
 import 'package:plant_disease_detection/services/image_classifier.dart';
+import 'package:plant_disease_detection/services/image_utility.dart';
 
 /// Accesses the api model through a Django Server
 /// Higher accuracy but slow response
@@ -13,8 +14,16 @@ class ImageClassifierHttp extends ImageClassifier {
 
   final dio = Dio();
 
+  static const maxSizeInMb = 2;
+
   @override
   Future<ModelResult> processImage(File file) async {
+    final size = await ImageUtil.getFileSize(file);
+    if (size != null) {
+      if (size > maxSizeInMb) {
+        throw "File size must not be more than ${maxSizeInMb}MB";
+      }
+    }
     dio.options.connectTimeout = Duration(seconds: 120);
     Map<String, dynamic> formData = {
       "image": await MultipartFile.fromFile(
@@ -39,6 +48,7 @@ class ImageClassifierHttp extends ImageClassifier {
         debugPrint(
           "${error.response?.statusCode} HTTP Error -> ${error.response}",
         );
+        throw "Image processing failed. ${error.response?.statusCode}";
       }
       throw "Image processing failed.";
     }
