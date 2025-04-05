@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:plant_disease_detection/models/model_result.dart';
 import 'package:plant_disease_detection/services/image_classifier.dart';
 
@@ -34,6 +35,11 @@ class ImageClassifierHttp extends ImageClassifier {
       );
       return ModelResult.fromJson(response.data);
     } catch (error) {
+      if (error is DioException) {
+        debugPrint(
+          "${error.response?.statusCode} HTTP Error -> ${error.response}",
+        );
+      }
       throw "Image processing failed.";
     }
   }

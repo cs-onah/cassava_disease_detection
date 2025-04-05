@@ -46,9 +46,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             onTap: () => notifier.changeType(ModelType.version2),
           ),
           ModelTypeTile(
-            title: "Tensorflow Lite Model V2",
+            title: "Tensorflow Lite Model V3",
             subtitle: "This option allows process your image using "
-                "/models/plant_disease_detection_v2.tflite",
+                "/models/plant_disease_detection_v3.tflite",
             isSelected: modelType == ModelType.version3,
             onTap: () => notifier.changeType(ModelType.version3),
           ),
