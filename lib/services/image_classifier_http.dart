@@ -2,15 +2,18 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:plant_disease_detection/models/model_result.dart';
+import 'package:plant_disease_detection/services/image_classifier.dart';
 
-@Deprecated("Use ImageClassificationService instead")
-class DjangoService {
+/// Accesses the api model through a Django Server
+/// Higher accuracy but slow response
+class ImageClassifierHttp extends ImageClassifier {
   static const url =
       'https://django-disease-detection-6.onrender.com/analyze-image';
 
   final dio = Dio();
 
-  Future<ModelResult> runImageAnalysis(File file) async {
+  @override
+  Future<ModelResult> processImage(File file) async {
     dio.options.connectTimeout = Duration(seconds: 120);
     Map<String, dynamic> formData = {
       "image": await MultipartFile.fromFile(

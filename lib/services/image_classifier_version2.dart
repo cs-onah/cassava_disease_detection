@@ -3,9 +3,10 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:image/image.dart';
 import 'package:plant_disease_detection/models/model_result.dart';
+import 'package:plant_disease_detection/services/image_classifier.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 
-class ImageClassificationService {
+class ImageClassifierVersion2 extends ImageClassifier {
   /// Resizes image to 224x224 pixels and returns [Image]
   static Image loadAndResizeImage(File file) {
     final img = decodeImage(file.readAsBytesSync())!;
@@ -64,15 +65,9 @@ class ImageClassificationService {
   }
 
   /// Returns result from classification
-  static Future<ModelResult> processImage(File uploadedImage) async {
+  @override
+  Future<ModelResult> processImage(File uploadedImage) async {
     const modelPath = "assets/models/plant_disease_detection_v2.tflite";
-    final classesDict = {
-      0: 'Mosaic_N',
-      1: 'blight_N',
-      2: 'brownstreak_N',
-      3: 'greenmite_N'
-    };
-
     final interpreter = await Interpreter.fromAsset(modelPath);
 
     /// Actual shape: [1, 224, 224, 3]
@@ -84,14 +79,13 @@ class ImageClassificationService {
     /// C: Number of channels (e.g., 3 for RGB images, 1 for grayscale)
     ///
     /// NOTE: Some models can require a different format
-    final inputTensor = interpreter.getInputTensors().first;
+    // final inputTensor = interpreter.getInputTensors().first;
+    // log("input shape: ${inputTensor.shape}");
 
     /// actual shape: [1, 4]
     /// 2-D shape; (batch_size, num_classes)
-    final outputTensor = interpreter.getOutputTensors().first;
-
-    log("input shape: ${inputTensor.shape}");
-    log("output shape: ${outputTensor.shape}");
+    // final outputTensor = interpreter.getOutputTensors().first;
+    // log("output shape: ${outputTensor.shape}");
 
     final image = loadAndResizeImage(uploadedImage);
     final preprocessed = convertImage(image);

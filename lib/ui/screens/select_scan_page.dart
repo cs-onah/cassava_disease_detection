@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:plant_disease_detection/helpers/context_extension.dart';
-import 'package:plant_disease_detection/services/deprecated/django_service.dart';
-import 'package:plant_disease_detection/services/deprecated/image_classification_service_trial.dart';
-import 'package:plant_disease_detection/services/image_classification_service.dart';
+import 'package:plant_disease_detection/services/image_classifier.dart';
 import 'package:plant_disease_detection/services/image_utility.dart';
 import 'package:plant_disease_detection/ui/screens/result_page.dart';
 import 'package:plant_disease_detection/ui/theme/colors.dart';
 import 'package:plant_disease_detection/ui/widgets/credits_widget.dart';
 import 'package:plant_disease_detection/ui/widgets/media_source_dialog.dart';
 
-class SelectScanPage extends StatefulWidget {
+class SelectScanPage extends ConsumerStatefulWidget {
   const SelectScanPage({super.key});
   @override
-  State<SelectScanPage> createState() => _SelectScanPageState();
+  ConsumerState<SelectScanPage> createState() => _SelectScanPageState();
 }
 
-class _SelectScanPageState extends State<SelectScanPage> {
+class _SelectScanPageState extends ConsumerState<SelectScanPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -101,8 +100,9 @@ class _SelectScanPageState extends State<SelectScanPage> {
     if (file == null) return;
     context.showLoading();
     try {
-      final result = await ImageClassificationService.processImage(file);
-      await Future.delayed(Duration(seconds: 1)); // Simulate delay
+      final model = ref.read(imageClassifier);
+      final result = await model.processImage(file);
+      debugPrint("${model.runtimeType} -> ${result.toJson()}");
       if (result.invalidResult) {
         context.pop();
         showRejectImageDialog();

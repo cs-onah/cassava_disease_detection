@@ -2,19 +2,20 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:plant_disease_detection/models/model_result.dart';
-import 'package:plant_disease_detection/services/image_classification_service.dart';
+import 'package:plant_disease_detection/services/image_classifier.dart';
 import 'package:plant_disease_detection/services/image_utility.dart';
 
-class DemoPage extends StatefulWidget {
+class DemoPage extends ConsumerStatefulWidget {
   const DemoPage({super.key});
 
   @override
-  State<DemoPage> createState() => _DemoPageState();
+  ConsumerState<DemoPage> createState() => _DemoPageState();
 }
 
-class _DemoPageState extends State<DemoPage> {
+class _DemoPageState extends ConsumerState<DemoPage> {
   File? file;
   ModelResult? result;
 
@@ -117,7 +118,7 @@ class _DemoPageState extends State<DemoPage> {
     ); // show Loader
     final image = await ImageUtil.convertFileToImageData(file!);
     if (image == null) return;
-    result = await ImageClassificationService.processImage(file!);
+    result = await ref.read(imageClassifier).processImage(file!);
     Navigator.of(context).pop(); // pop Loader
     log(result?.toJson().toString() ?? '');
     setState(() {});

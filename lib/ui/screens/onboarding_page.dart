@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plant_disease_detection/helpers/context_extension.dart';
 import 'package:plant_disease_detection/ui/screens/select_scan_page.dart';
+import 'package:plant_disease_detection/ui/screens/settings_screen.dart';
 import 'package:plant_disease_detection/ui/theme/colors.dart';
 
 class OnboardingPage extends StatelessWidget {
@@ -61,7 +62,23 @@ class OnboardingPage extends StatelessWidget {
                   child: Text(
                     "Start Now",
                     style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () => context.push(SettingsScreen()),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.transparentWhite,
+                  ),
+                  child: Text(
+                    "Settings",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 40),
