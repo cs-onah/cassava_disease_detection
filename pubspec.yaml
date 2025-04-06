@@ -21,6 +21,7 @@ dependencies:
   dio:
   url_launcher:
   flutter_riverpod:
+  flutter_image_compress:
 
 dev_dependencies:
   flutter_lints: ^2.0.0

@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image/image.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -27,6 +28,44 @@ class ImageUtil {
     } catch (e) {
       debugPrint('Error: $e');
       return null;
+    }
+  }
+
+  static Future<File> compressImage(File file) async {
+    CompressFormat? format;
+    if (file.absolute.path.endsWith("png")) {
+      format = CompressFormat.png;
+    }
+    if (file.absolute.path.endsWith("heic")) {
+      format = CompressFormat.heic;
+    }
+    if (file.absolute.path.endsWith("jpg") ||
+        file.absolute.path.endsWith("jpeg")) {
+      format = CompressFormat.jpeg;
+    }
+    if (format == null)  {
+      debugPrint("Compress Image Error-> Unknown Format");
+      return file;
+    }
+    try {
+      final filePath = file.absolute.path;
+      final lastIndex = filePath.lastIndexOf(RegExp(r'\.(jpg|png|jpeg)$'));
+      final split = filePath.substring(0, (lastIndex));
+      final outPath = "${split}_out${filePath.substring(lastIndex)}";
+      final result = await FlutterImageCompress.compressAndGetFile(
+        file.absolute.path,
+        outPath,
+        quality: 20,
+        format: format,
+      );
+      if (result == null)  {
+        debugPrint("Compress Image Error-> Compression Failed");
+        return file;
+      }
+      return File(result.path);
+    } catch (error) {
+      debugPrint("Compress Image Error-> $error");
+      return file;
     }
   }
 

@@ -14,16 +14,28 @@ class ImageClassifierHttp extends ImageClassifier {
 
   final dio = Dio();
 
-  static const maxSizeInMb = 2;
+  /// Images above 1.5MB crashes the server.
+  static const maxSizeInMb = 1.5;
+
+  Future<File> checkSizeAndMaybeCompress(File file) async {
+    double? size = await ImageUtil.getFileSize(file);
+    if (size == null) throw "File size unknown";
+    if (size > maxSizeInMb) {
+      file = await ImageUtil.compressImage(file);
+    }
+    // check size after possible compression
+    size = await ImageUtil.getFileSize(file);
+    if (size == null) throw "File size unknown";
+    if (size > maxSizeInMb) {
+      throw "File size must not be more than ${maxSizeInMb}MB";
+    } else {
+      return file;
+    }
+  }
 
   @override
   Future<ModelResult> processImage(File file) async {
-    final size = await ImageUtil.getFileSize(file);
-    if (size != null) {
-      if (size > maxSizeInMb) {
-        throw "File size must not be more than ${maxSizeInMb}MB";
-      }
-    }
+    file = await checkSizeAndMaybeCompress(file);
     dio.options.connectTimeout = Duration(seconds: 120);
     Map<String, dynamic> formData = {
       "image": await MultipartFile.fromFile(
