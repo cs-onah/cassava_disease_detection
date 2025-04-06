@@ -8,7 +8,7 @@ The model can identify the following diseases:
 * Brown Streak
 * Green Mite
 
-👉Download now: [Google Drive](https://drive.google.com/file/d/1qNnsgE0HKpA3nuVE_GJfWcihaoe96pT0/view?usp=drive_link)
+👉Download now: [Google Drive](https://drive.google.com/file/d/1PTgTomW0g3q8WVoQ_82KTPkkLXVW28_a/view?usp=drive_link)
 
 Test Images: https://drive.google.com/drive/folders/1XHgRwBI7voq8zCPEWHaIFLnWGp1c7P2s
 
